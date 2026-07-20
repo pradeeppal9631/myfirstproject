@@ -21,7 +21,7 @@ public class Userentryservice {
     @Autowired
     private Cliententryservice cliententryservice;
     @Transactional
-    public void saveEntry(JournalEntry journalEntry, String clientName) {
+    public void saveEntry(JournalEntry journalEntry,String clientName) {
 
         try{
             ClientEntry client = cliententryservice.findByClientName(clientName);
@@ -60,6 +60,11 @@ public class Userentryservice {
         userentryrepo.deleteById(id);
      }
 
+
+
+    public JournalEntry updateEntry(JournalEntry journalEntry) {
+        return userentryrepo.save(journalEntry);
+    }
 
 
 }

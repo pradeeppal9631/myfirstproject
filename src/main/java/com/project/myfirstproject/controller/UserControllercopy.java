@@ -8,6 +8,8 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -24,8 +26,10 @@ public class UserControllercopy {
     private Cliententryservice cliententryservice;
 
     @GetMapping("{clientName}")
-    public ResponseEntity<?> getAllJournalEntriesofClienEntry(@PathVariable String clientName){
-        ClientEntry client= cliententryservice.findByClientName(clientName);
+    public ResponseEntity<?> getAllJournalEntriesofClienEntry(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("Username = " + authentication.getName());
+        ClientEntry client= cliententryservice.findByClientName(authentication.getName());
         List<JournalEntry> all= client.getJournalEntry();
         if(all!=null && !all.isEmpty()){
             return new ResponseEntity<>(all, HttpStatus.OK);
@@ -34,15 +38,16 @@ public class UserControllercopy {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping ("{clientName}")
-    public  ResponseEntity<JournalEntry>  createEntry(@RequestBody JournalEntry myUser, @PathVariable String clientName ) {
+    @PostMapping
+    public  ResponseEntity<JournalEntry>  createEntry(@RequestBody JournalEntry myUser ) {
 
         try {
 
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             myUser.setDate(LocalDateTime.now());
 
-            userentryservice.saveEntry(myUser, clientName);
+            userentryservice.saveEntry(myUser, authentication.getName());
 
             return new ResponseEntity<>(myUser, HttpStatus.CREATED);
 
@@ -52,8 +57,24 @@ public class UserControllercopy {
     }
 
     @GetMapping("/id/{myId}")
-    public JournalEntry getJournalEntryById(@PathVariable ObjectId myId) {
-       return userentryservice.findById(myId).orElse(null);
+    public ResponseEntity<?> getJournalEntryById(@PathVariable ObjectId myId) {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+
+        ClientEntry client = cliententryservice.findByClientName(authentication.getName());
+
+        if (client == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        for (JournalEntry entry : client.getJournalEntry()) {
+            if (entry.getId().equals(myId)) {
+                return new ResponseEntity<>(entry, HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>("Journal Entry Not Found", HttpStatus.NOT_FOUND);
     }
 
 
@@ -63,19 +84,69 @@ public class UserControllercopy {
         return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @PutMapping("id/{id}")
-        public ResponseEntity<?> updateJournalEntryById(@PathVariable ObjectId id, @RequestBody JournalEntry myUser, String clientName){
-         JournalEntry old = userentryservice.findById(id).orElse(null);
-         if(old!=null){
+    //@PutMapping("id/{myId}")
+//        public ResponseEntity<?> updateJournalEntryById(@PathVariable ObjectId id, @RequestBody JournalEntry myUser){
+//
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        ClientEntry client = cliententryservice.findByClientName(authentication.getName());
+//
+//         JournalEntry old = userentryservice.findById(id).orElse(null);
+//         if(old!=null){
+//
+//             old.setTitle(myUser.getTitle()!=null && !myUser.getTitle().equals("")? myUser.getTitle(): old.getContent());
+//             old.setContent(myUser.getContent()!=null && myUser.equals(" ") ? myUser.getContent(): old.getContent());
+//         }
+//
+//        userentryservice.saveEntry(old, authentication.getName());
+//        return new ResponseEntity<>(old, HttpStatus.OK);
 
-             old.setTitle(myUser.getTitle()!=null && !myUser.getTitle().equals("")? myUser.getTitle(): old.getContent());
-             old.setContent(myUser.getContent()!=null && myUser.equals(" ") ? myUser.getContent(): old.getContent());
-         }
+    @PutMapping("/id/{myId}")
+    public ResponseEntity<?> updateJournalEntryById(
+            @PathVariable("myId") ObjectId myId,
+            @RequestBody JournalEntry newEntry) {
 
-        userentryservice.saveEntry(old, clientName);
+        // Logged-in username
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // Find logged-in user
+        ClientEntry client = cliententryservice.findByClientName(username);
+
+        if (client == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Find journal by id
+        JournalEntry old = userentryservice.findById(myId).orElse(null);
+
+        if (old == null) {
+            return new ResponseEntity<>("Journal not found", HttpStatus.NOT_FOUND);
+        }
+
+        // Check whether this journal belongs to the logged-in user
+        boolean isOwner = client.getJournalEntry()
+                .stream()
+                .anyMatch(entry -> entry.getId().equals(myId));
+
+        if (!isOwner) {
+            return new ResponseEntity<>("You are not authorized to update this journal",
+                    HttpStatus.FORBIDDEN);
+        }
+
+        // Update title
+        if (newEntry.getTitle() != null && !newEntry.getTitle().isBlank()) {
+            old.setTitle(newEntry.getTitle());
+        }
+
+        // Update content
+        if (newEntry.getContent() != null && !newEntry.getContent().isBlank()) {
+            old.setContent(newEntry.getContent());
+        }
+
+        // Save updated journal
+        userentryservice.updateEntry(old);
+
         return new ResponseEntity<>(old, HttpStatus.OK);
     }
-
-
 
 }

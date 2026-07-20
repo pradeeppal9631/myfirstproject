@@ -17,8 +17,8 @@ public class Findclient {
         return "OK";
     }
 
-    @PostMapping("/ create-client")
-    public void createClient(@RequestBody ClientEntry myclient) {
-        cliententryservice.saveUser(myclient);
+    @PostMapping("/create-client")
+    public ClientEntry createClient(@RequestBody ClientEntry myclient) {
+        return cliententryservice.saveUser(myclient);
     }
 }
