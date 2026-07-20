@@ -9,4 +9,6 @@ public interface Clientrentryrepo extends MongoRepository<ClientEntry, ObjectId>
 
    public ClientEntry findByClientName(String clientName);
 
+     public void deleteByClientName(String clientName);
+
 }

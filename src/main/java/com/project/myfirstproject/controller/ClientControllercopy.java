@@ -78,4 +78,13 @@ public ResponseEntity<?> updateUser(@RequestBody ClientEntry myclient) {
 }
 
 
+    @DeleteMapping
+    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId  myId, Object clientName){
+       Authentication authentication=  SecurityContextHolder.getContext().getAuthentication();
+        cliententryservice.deleteById( authentication.getName());
+        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+
+
 }

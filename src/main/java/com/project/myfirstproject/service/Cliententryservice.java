@@ -63,6 +63,10 @@ public class Cliententryservice {
     public void setclientName(Object o) {
 
     }
+
+    public void deleteById(Object clientName) {
+
+    }
 }
 
 // controller --> service_--> repository
