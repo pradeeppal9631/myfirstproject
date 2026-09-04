@@ -24,27 +24,26 @@ public class ClientControllercopy {
     @Autowired
     private Cliententryservice cliententryservice;
 
-    @GetMapping
-    public List<ClientEntry> getAllClientEntry(){
+//    @GetMapping
+//    public List<ClientEntry> getAllClientEntry() {
+//
+//        return cliententryservice.getAll();
+//    }
 
-        return cliententryservice.getAll();
-    }
     @Autowired
     private Clientrentryrepo clientrentryrepo;
 
 
+    @PostMapping
 
+    public void createClientEntry(@RequestBody ClientEntry myclient) {
 
-     @PostMapping
+        cliententryservice.saveUser(myclient);
+    }
 
-     public void createClientEntry(@RequestBody ClientEntry myclient){
+    //@PutMapping("/{clientName}")
 
-         cliententryservice.saveUser(myclient);
-     }
-
-     //@PutMapping("/{clientName}")
-
-//   // public ResponseEntity<?> updateClientEntry(@RequestBody ClientEntry myclient,@PathVariable String clientName){
+    //   // public ResponseEntity<?> updateClientEntry(@RequestBody ClientEntry myclient,@PathVariable String clientName){
 //       ClientEntry clientIndb= cliententryservice.findByClientName((clientName));
 //        if(clientIndb!=null){
 //            clientIndb.setClientName(myclient.getClientName());
@@ -53,38 +52,44 @@ public class ClientControllercopy {
 //        }
 //
 //          return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-@PutMapping
-public ResponseEntity<?> updateUser(@RequestBody ClientEntry myclient) {
+    @PutMapping
+    public ResponseEntity<?> updateUser(@RequestBody ClientEntry myclient) {
 
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    System.out.println("Authentication = " + authentication);
-    System.out.println("Username = " + authentication.getName());
+        System.out.println("Authentication = " + authentication);
+        System.out.println("Username = " + authentication.getName());
 
-    ClientEntry clientIndb = cliententryservice.findByClientName(authentication.getName());
+        ClientEntry clientIndb = cliententryservice.findByClientName(authentication.getName());
 
-    System.out.println("User from DB = " + clientIndb);
+        System.out.println("User from DB = " + clientIndb);
 
-    if (clientIndb != null) {
-        clientIndb.setClientName(myclient.getClientName());
-        clientIndb.setPassword(myclient.getPassword());
+        if (clientIndb != null) {
+            clientIndb.setClientName(myclient.getClientName());
+            clientIndb.setPassword(myclient.getPassword());
 
-        cliententryservice.saveUser(clientIndb);
+            cliententryservice.saveUser(clientIndb);
 
-        return ResponseEntity.ok("Updated");
-    }
+            return ResponseEntity.ok("Updated");
+        }
 
-    return ResponseEntity.notFound().build();
-}
-
-
-    @DeleteMapping
-    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId  myId, Object clientName){
-       Authentication authentication=  SecurityContextHolder.getContext().getAuthentication();
-        cliententryservice.deleteById( authentication.getName());
-        return  new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.notFound().build();
     }
 
 
+//    @DeleteMapping
+//    public ResponseEntity<?> deleteJournalEntryById(@PathVariable ObjectId myId, Object clientName) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        cliententryservice.deleteById(authentication.getName());
+//        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//    }
 
+    @GetMapping
+    public ResponseEntity<?> graceful() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        return ResponseEntity.ok("hii " + authentication.getName());
+    }
 }

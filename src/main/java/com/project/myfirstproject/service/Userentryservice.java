@@ -4,6 +4,8 @@ import com.project.myfirstproject.entity.ClientEntry;
 import com.project.myfirstproject.entity.JournalEntry;
 import com.project.myfirstproject.repository.Userentryrepo;
 import org.bson.types.ObjectId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+//import java.util.logging.Logger;
 
 
 @Component
@@ -20,6 +23,10 @@ public class Userentryservice {
     private Userentryrepo userentryrepo;
     @Autowired
     private Cliententryservice cliententryservice;
+
+    //private  static final Logger logger=  LoggerFactory.getLogger(Userentryservice.class);
+
+
     @Transactional
     public void saveEntry(JournalEntry journalEntry,String clientName) {
 
