@@ -8,7 +8,7 @@ spring:
       host:  demure-cushy-micropure-76019.db.redis.io
       port: 10420
       username: default
-      password: qHCSjJ2rJL7zfRvjBLLpJSEirsDWuabM
+      password:
       ssl:
         enabled: false
 
