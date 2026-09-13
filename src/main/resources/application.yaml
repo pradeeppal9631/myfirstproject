@@ -1,8 +1,10 @@
 
 spring:
   redis:
-    host: localhost
-    port: 6379
+    host: demure-cushy-micropure-76019.db.redis.io
+    port: 10420
+      username:default
+      password::qHCSjJ2rJL7zfRvjBLLpJSEirsDWuabM@
 
   application:
     name: myfirstproject
