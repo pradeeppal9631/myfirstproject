@@ -26,4 +26,12 @@ public class Redistest {
 
         return value != null ? value.toString() : "Key not found";
     }
+
+    public void deleteData(String key) {
+        redisTemplate.delete(key);
+    }
+    public String testRedis() {
+        redisTemplate.opsForValue().set("test", "hello");
+        return redisTemplate.opsForValue().get("test").toString();
+    }
 }

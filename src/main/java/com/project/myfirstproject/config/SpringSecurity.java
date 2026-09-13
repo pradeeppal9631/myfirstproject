@@ -36,6 +36,7 @@ public class SpringSecurity {
                         .requestMatchers(HttpMethod.POST, "/client").permitAll()
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/redis/**").permitAll()
+                        .requestMatchers("/error").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
