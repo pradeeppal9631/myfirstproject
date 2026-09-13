@@ -5,20 +5,19 @@ spring:
 
   data:
     redis:
-      host:  demure-cushy-micropure-76019.db.redis.io
-      port: 10420
-      username: default
-      password:
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
+      username: ${REDIS_USERNAME}
+      password: ${REDIS_PASSWORD}
       ssl:
-        enabled: false
-
+        enabled: true
 
     mongodb:
-      uri: mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@cluster0.b1chi54.mongodb.net/userdb?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGODB_URI}
       database: userdb
       auto-index-creation: true
 
 server:
-  port: 8081
+  port: ${PORT:8081}
   servlet:
     context-path: /api
