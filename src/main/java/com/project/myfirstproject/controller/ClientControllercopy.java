@@ -23,7 +23,7 @@ public class ClientControllercopy {
 
     @Autowired
     private Cliententryservice cliententryservice;
-
+//
 //    @GetMapping
 //    public List<ClientEntry> getAllClientEntry() {
 //
