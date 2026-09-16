@@ -37,6 +37,8 @@ public class SpringSecurity {
                         .requestMatchers("/public/**").permitAll()
                         .requestMatchers("/redis/**").permitAll()
                         .requestMatchers("/error").permitAll()
+                        .requestMatchers("/email/**").permitAll()
+                        .requestMatchers("/client/send-to-kafka/**").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

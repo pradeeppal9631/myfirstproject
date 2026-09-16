@@ -89,7 +89,26 @@ public class ClientControllercopy {
 
         Authentication authentication =
                 SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        ClientEntry client = cliententryservice.findByClientName(username);
 
-        return ResponseEntity.ok("hii " + authentication.getName());
+        if (client == null) {
+            return ResponseEntity.notFound().build();
+        }
+        //return ResponseEntity.ok("hii " + authentication.getName());
+        return ResponseEntity.ok(client);
+
     }
+
+    @PostMapping("/send-to-kafka/{clientName}")
+    public ResponseEntity<?> sendUserToKafka(
+            @PathVariable String clientName) {
+
+        cliententryservice.sendExistingUserToKafka(clientName);
+
+        return ResponseEntity.ok(
+                "User sent to Kafka successfully: " + clientName
+        );
+    }
+
 }

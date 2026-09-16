@@ -26,6 +26,7 @@ public class ClientEntry {
     private String clientName;
     @NonNull
     private String password;
+    private String email;
 
     @DBRef // to generate a link from none entity to another entity like foreign key // link annotation
     private List<JournalEntry> journalEntry =new ArrayList<>();
