@@ -1,49 +1,61 @@
-spring:
-  application:
-    name: myfirstproject
+  ```yaml
+  spring:
+    application:
+      name: myfirstproject
 
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      port: ${REDIS_PORT}
-      username: ${REDIS_USERNAME}
-      password: ${REDIS_PASSWORD}
-      ssl:
-        enabled: false
+    data:
+      redis:
+        host: ${REDIS_HOST}
+        port: ${REDIS_PORT}
+        username: ${REDIS_USERNAME}
+        password: ${REDIS_PASSWORD}
+        ssl:
+          enabled: false
 
-    mongodb:
-      uri: ${MONGODB_URI}
-      database: userdb
-      auto-index-creation: true
+      mongodb:
+        uri: ${MONGODB_URI}
+        database: userdb
+        auto-index-creation: true
 
-  kafka:
-    bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
+    kafka:
+      bootstrap-servers: ${KAFKA_HOST}:${KAFKA_PORT}
 
-    properties:
-      security.protocol: SASL_SSL
-      sasl.mechanism: PLAIN
-      sasl.jaas.config: org.apache.kafka.common.security.plain.PlainLoginModule required username="${KAFKA_USERNAME}" password="${KAFKA_PASSWORD}";
-      ssl.truststore.location: classpath:kafka/aiven-kafka-truststore.jks
-      ssl.truststore.password: ${KAFKA_TRUSTSTORE_PASSWORD}
-      ssl.truststore.type: JKS
+      properties:
+        security.protocol: SASL_SSL
+        sasl.mechanism: PLAIN
+        sasl.jaas.config: >-
+          org.apache.kafka.common.security.plain.PlainLoginModule required
+          username="${KAFKA_USERNAME}"
+          password="${KAFKA_PASSWORD}";
 
-    consumer:
-      group-id: email-group
-      auto-offset-reset: earliest
+        ssl.truststore.location: ${KAFKA_TRUSTSTORE_LOCATION}
+        ssl.truststore.password: ${KAFKA_TRUSTSTORE_PASSWORD}
+        ssl.truststore.type: JKS
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
+      consumer:
+        group-id: email-group
+        auto-offset-reset: earliest
+        key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+        value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
-server:
-  port: ${PORT:8081}
-  servlet:
-    context-path: /api
+      producer:
+        key-serializer: org.apache.kafka.common.serialization.StringSerializer
+        value-serializer: org.apache.kafka.common.serialization.StringSerializer
+
+    mail:
+      host: smtp.gmail.com
+      port: 587
+      username: ${MAIL_USERNAME}
+      password: ${MAIL_PASSWORD}
+      properties:
+        mail:
+          smtp:
+            auth: true
+            starttls:
+              enable: true
+
+  server:
+    port: ${PORT:8081}
+    servlet:
+      context-path: /api
+
